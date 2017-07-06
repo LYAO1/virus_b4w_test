@@ -102,13 +102,13 @@ var _player_buttons = [
      replace_button_id: "auto_rotate_off_button",
      replace_button_cb: stop_camera},
 
-    {type:              "trigger_button",
+    /*{type:              "trigger_button",
      id:                "sound_on_button",
      callback:          stop_sound,
      replace_button_id: "sound_off_button",
      replace_button_cb: play_sound}
 
-    /*{type:                   "menu_button",
+    {type:                   "menu_button",
      id:                     "stereo_buttons_container",
      callback:               open_stereo_menu,
      child_buttons_array_id: ["def_mode_button",
@@ -461,7 +461,7 @@ function init_control_buttons() {
         return false;
     };
 
-    init_links();
+    /*init_links();*/
 
     for (var i = 0; i < _player_buttons.length; i++) {
         var button = _player_buttons[i];
@@ -481,7 +481,7 @@ function init_control_buttons() {
     }
 }
 
-function init_links() {
+/*function init_links() {
     var button_links = document.querySelectorAll(".control_panel_button a");
 
     for (var i = 0; i < button_links.length; i++) {
@@ -492,7 +492,7 @@ function init_links() {
 
         add_hover_class_to_button(link.parentNode);
     }
-}
+}*/
 
 function search_file() {
     var module_name = m_cfg.get("built_in_module_name");
@@ -624,7 +624,7 @@ function stop_camera(e) {
         update_button(e.target);
 }
 
-function play_sound(e) {
+/*function play_sound(e) {
     if (is_anim_in_process())
         return;
 
@@ -640,7 +640,7 @@ function stop_sound(e) {
     update_button(e.target);
 }
 
-/*function pause_engine(e) {
+function pause_engine(e) {
     if (is_anim_in_process())
         return;
 
@@ -941,7 +941,7 @@ function clear_deferred_close() {
     clearTimeout(_menu_close_func);
 }
 
-function close_qual_menu(e) {
+/*function close_qual_menu(e) {
     if (is_anim_in_process())
         return;
 
@@ -1065,7 +1065,7 @@ function open_stereo_menu(e, button) {
         child[i].style.display = "block";
         child[i].style.opacity = 1;
     }
-}
+}*/
 
 function on_resize() {
     m_cont.resize_to_container();
@@ -1167,7 +1167,7 @@ function loaded_callback(data_id, success) {
 
     if (meta_tags.title)
         document.title = meta_tags.title;
-
+        open_help();
     /*check_hmd();*/
 }
 
@@ -1294,7 +1294,7 @@ function remove_built_in_scripts() {
     scripts.parentElement.removeChild(scripts);
 }
 
-function change_quality(qual) {
+/*function change_quality(qual) {
     var cur_quality = m_cfg.get("quality");
 
     if (cur_quality == qual)
@@ -1362,7 +1362,7 @@ function change_quality(qual) {
 
     _stereo_mode = stereo;
     set_stereo_button(stereo);
-}*/
+}
 
 function reload_app() {
     setTimeout(function() {
@@ -1400,7 +1400,7 @@ function set_stereo_config() {
         stereo = "HMD";
 
     m_cfg.set("stereo", stereo);
-}
+}*/
 
 function report_app_error(text_message, link_message, link) {
     var error_name = document.querySelector("#error_name");
