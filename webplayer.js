@@ -74,6 +74,8 @@ var _hor_button_section;
 var _selected_object;
 var _stereo_mode;
 var _hhmi_container;
+var _hhmi_logo;
+
 
 var _vec2_tmp = new Float32Array(2);
 
@@ -399,7 +401,7 @@ function cache_dom_elems() {
     _help_info_container = document.querySelector("#help_info_container");
     _help_button = document.querySelector("#help_button");
     _hor_button_section = document.querySelector("#hor_button_section");
-   
+    _hhmi_logo = document.querySelector("#hhmi_logo");
 }
 
 
@@ -465,7 +467,7 @@ function init_control_buttons() {
         return false;
     };
 
-    /*init_links();*/
+    init_links();
 
     for (var i = 0; i < _player_buttons.length; i++) {
         var button = _player_buttons[i];
@@ -1173,6 +1175,8 @@ function loaded_callback(data_id, success) {
     if (meta_tags.title)
         document.title = meta_tags.title;
         open_help();
+
+    add_hover_class_to_button(_hhmi_logo);
     /*check_hmd();*/
 }
 
@@ -1449,6 +1453,15 @@ function hide_interface_elem(elem, cb) {
 
     m_app.css_animate(elem, "opacity", 1, 0, ELEM_ANIM_TIME, "", "", ext_cb);
 }
+
+function logo_event(){
+	
+}
+
+function goto_biointeractive(){
+
+}
+
 function report_app_error(text_message, link_message, link) {
     var error_name = document.querySelector("#error_name");
     var error_info = document.querySelector("#error_info");
