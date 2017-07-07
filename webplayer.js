@@ -23,6 +23,7 @@ var BUILT_IN_SCRIPTS_ID      = "built_in_scripts";
 var DEFAULT_QUALITY          = "HIGH";
 var DEFAULT_STEREO           = "NONE";
 var CAMERA_AUTO_ROTATE_SPEED = 0.3;
+var  ELEM_ANIM_TIME          = 0.5;
 
 var HIDE_MENU_DELAY          = 2000;
 var ANIM_ELEM_DELAY          = 50;
@@ -48,8 +49,8 @@ var _is_anim_left            = false;
 /*var _is_qual_menu_opened     = false;*/
 /*var _is_stereo_menu_opened   = false;*/
 var _is_help_menu_opened     = false;
-/*var _no_social               = false;
-var _socials                 = [];*/
+var _no_social               = false;
+var _socials                 = [];
 
 var _is_first_stage = false;
 var _is_second_stage = false;
@@ -72,6 +73,7 @@ var _help_button;
 var _hor_button_section;
 var _selected_object;
 var _stereo_mode;
+var _hhmi_container;
 
 var _vec2_tmp = new Float32Array(2);
 
@@ -135,7 +137,7 @@ var LOAD_PARAM_STR = "__ASSETS_LOADING_PATH__";
 var PVR_PARAM_STR = "__COMPRESSED_TEXTURES_PVR__";
 var DDS_PARAM_STR = "__COMPRESSED_TEXTURES_DDS__";
 var FPS_PARAM_STR = "__SHOW_FPS__";
-/*var SOCIAL_PARAM_STR = "__NO_SOCIAL__";*/
+var SOCIAL_PARAM_STR = "__NO_SOCIAL__";
 var ALPHA_PARAM_STR = "__ALPHA__";
 var MIN_CAP_PARAM_STR = "__MIN_CAPABILITIES__";
 var AUTOROTATE_PARAM_STR = "__AUTOROTATE__";
@@ -146,7 +148,7 @@ var _url_params = {
     "compressed_textures_pvr": PVR_PARAM_STR,
     "compressed_textures_dds": DDS_PARAM_STR,
     "show_fps": FPS_PARAM_STR,
-    /*"no_social": SOCIAL_PARAM_STR,*/
+    "no_social": SOCIAL_PARAM_STR,
     "alpha": ALPHA_PARAM_STR,
     "min_capabilities": MIN_CAP_PARAM_STR,
     "autorotate": AUTOROTATE_PARAM_STR,
@@ -173,7 +175,7 @@ exports.init = function() {
     var pvr_available = _url_params["compressed_textures_pvr"] != PVR_PARAM_STR;
     var gzip_available = _url_params["compressed_gzip"] != GZIP_PARAM_STR;
 
-    /*_no_social = _url_params["no_social"] != SOCIAL_PARAM_STR;*/
+    _no_social = _url_params["no_social"] != SOCIAL_PARAM_STR;
 
     var min50_available = false;
 
@@ -199,8 +201,8 @@ exports.init = function() {
         if (!show_fps && "show_fps" in url_params)
             show_fps = true;
 
-        /*if (!_no_social && "no_social" in url_params)
-            _no_social = true;*/
+        if (!_no_social && "no_social" in url_params)
+            _no_social = true;
 
         if (!alpha && "alpha" in url_params)
             alpha = true;
@@ -211,13 +213,13 @@ exports.init = function() {
         if (!min_capabilities && "min_capabilities" in url_params)
             min_capabilities = true;
 
-        /*if ("socials" in url_params) {
+        if ("socials" in url_params) {
             var socials = url_params["socials"].split("");
 
             _socials = socials.filter(function (value, index, array) {
                 return array.indexOf(value) == index;
             })
-        }*/
+        }
     }
 
     m_storage.init("b4w_webplayer:" + load);
@@ -268,7 +270,7 @@ function init_cb(canvas_element, success) {
 
     init_control_buttons();
 
-    /*prepare_soc_btns();*/
+    prepare_soc_btns();
 
     m_gp_conf.update();
 
@@ -284,7 +286,7 @@ function init_cb(canvas_element, success) {
     on_resize();
 }
 
-/*function prepare_soc_btns() {
+function prepare_soc_btns() {
     var socials = _socials;
 
     if (!socials.length)
@@ -346,7 +348,7 @@ function init_cb(canvas_element, success) {
     }).forEach(function(next){
             document.querySelector("#vert_section_button").appendChild(next);
     })
-}*/
+}
 
 function display_no_webgl_bg() {
     var url_params = m_app.get_url_params(true);
@@ -381,6 +383,7 @@ function display_no_webgl_bg() {
 }
 
 function cache_dom_elems() {
+    _hhmi_container = document.querySelector("#hhmi_container");
     _circle_container = document.querySelector("#circle_container");
     _preloader_caption = document.querySelector("#preloader_caption");
     _first_stage = document.querySelector("#first_stage");
@@ -396,6 +399,7 @@ function cache_dom_elems() {
     _help_info_container = document.querySelector("#help_info_container");
     _help_button = document.querySelector("#help_button");
     _hor_button_section = document.querySelector("#hor_button_section");
+   
 }
 
 
@@ -481,7 +485,7 @@ function init_control_buttons() {
     }
 }
 
-/*function init_links() {
+function init_links() {
     var button_links = document.querySelectorAll(".control_panel_button a");
 
     for (var i = 0; i < button_links.length; i++) {
@@ -492,7 +496,7 @@ function init_control_buttons() {
 
         add_hover_class_to_button(link.parentNode);
     }
-}*/
+}
 
 function search_file() {
     var module_name = m_cfg.get("built_in_module_name");
@@ -756,7 +760,7 @@ function close_menu() {
     close_stereo_menu();*/
 
     var hor_elem  = document.querySelector("#help_button");
-    /*var vert_elem = document.querySelector("#vert_section_button").firstElementChild;*/
+    var vert_elem = document.querySelector("#vert_section_button").firstElementChild;
 
     var drop_left = function(elem) {
         _is_anim_left = true;
@@ -779,10 +783,11 @@ function close_menu() {
         });
     }
     drop_left(hor_elem);
-    /* var drop_top = function(elem) {
+    
+    var drop_top = function(elem) {
         _is_anim_top = true;
 
-        m_app.css_animate(elem, "marginBottom", 0, -45, ANIM_ELEM_DELAY, "", "px");
+        m_app.css_animate(elem, "marginTop", 0, -45, ANIM_ELEM_DELAY, "", "px");
 
         m_app.css_animate(elem, "opacity", 1, 0, ANIM_ELEM_DELAY, "", "", function() {
             if (elem.nextElementSibling && elem.nextElementSibling.id != "opened_button")
@@ -802,7 +807,7 @@ function close_menu() {
         drop_left(hor_elem);
 
    if (!_no_social)
-        drop_top(vert_elem);*/
+        drop_top(vert_elem);
 }
 
 function open_menu() {
@@ -823,7 +828,7 @@ function open_menu() {
                    document.querySelector("#quality_buttons_container");
 
 
-    /*var vert_elem = document.querySelector("#vert_section_button").lastElementChild;*/
+    var vert_elem = document.querySelector("#vert_section_button").lastElementChild;
 
     var drop_left = function(elem) {
         _is_anim_left = true;
@@ -862,13 +867,13 @@ function open_menu() {
         m_app.css_animate(elem, "opacity", 0, 1, ANIM_ELEM_DELAY, "", "");
     }
 
-    /*var drop_top = function(elem) {
+    var drop_top = function(elem) {
         _is_anim_top = true;
 
-        elem.style.marginBottom = "-45px";
+        elem.style.marginTop = "-45px";
         elem.style.display = "block";
 
-        m_app.css_animate(elem, "marginBottom", -45, 0, ANIM_ELEM_DELAY, "", "px", function() {
+        m_app.css_animate(elem, "marginTop", -45, 0, ANIM_ELEM_DELAY, "", "px", function() {
 
             if (!elem.previousElementSibling) {
                 setTimeout(function() {
@@ -885,7 +890,7 @@ function open_menu() {
         m_app.css_animate(elem, "opacity", 0, 1, ANIM_ELEM_DELAY, "", "");
     }
      if (!_no_social)
-        drop_top(vert_elem);*/
+        drop_top(vert_elem);
 
     _hor_button_section.style.display = "block";
 
@@ -1257,6 +1262,7 @@ function preloader_callback(percentage, load_time) {
             elem:     _preloader_container,
             duration: PRELOADER_HIDE_DELAY,
             cb:     function() {
+            	 show_interface_elem(_hhmi_container);
                 _preloader_container.parentElement.removeChild(_preloader_container);
                 open_menu();
             }
@@ -1277,6 +1283,7 @@ function preloader_callback(percentage, load_time) {
         extend_objs_props(array, common_obj);
 
         m_app.queue_animate(array);
+
     }
 }
 
@@ -1401,7 +1408,47 @@ function set_stereo_config() {
 
     m_cfg.set("stereo", stereo);
 }*/
+// show DOM interface element with animation
+function show_interface_elem(elem, cb) {
+    if (!elem)
+        return;
 
+    cb = cb || function(){};
+
+    if (elem.style.display != "none" &&
+            window.getComputedStyle(elem).display != "none") {
+        cb();
+
+        return;
+    }
+
+    elem.style.display = "block";
+
+    m_app.css_animate(elem, "opacity", 0, 1, ELEM_ANIM_TIME, "", "", cb);
+}
+
+// hide DOM interface element with animation
+function hide_interface_elem(elem, cb) {
+    if (!elem)
+        return;
+
+    cb = cb || function(){};
+
+    if (elem.style.display == "none" ||
+            window.getComputedStyle(elem).display == "none") {
+        cb();
+
+        return;
+    }
+
+    var ext_cb = function() {
+        elem.style.display = "none";
+
+        cb();
+    }
+
+    m_app.css_animate(elem, "opacity", 1, 0, ELEM_ANIM_TIME, "", "", ext_cb);
+}
 function report_app_error(text_message, link_message, link) {
     var error_name = document.querySelector("#error_name");
     var error_info = document.querySelector("#error_info");
